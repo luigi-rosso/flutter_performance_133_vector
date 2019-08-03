@@ -10,8 +10,8 @@ class ExampleRenderer extends ProceduralShapeRenderer {
   final Paint paintOuter = Paint()
     ..color = const Color.fromRGBO(0, 155, 255, 1.0);
   final Paint paintStroke = Paint()
-  ..style = PaintingStyle.stroke
-  ..strokeWidth = 0.02
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 0.02
     ..color = const Color.fromRGBO(0, 0, 0, 1.0);
   final Paint paintInner = Paint()
     ..color = const Color.fromRGBO(255, 255, 255, 1.0);
@@ -141,20 +141,28 @@ class ExampleRenderer extends ProceduralShapeRenderer {
 
   @override
   void render(Size size, Offset offset, Canvas canvas) {
-    canvas.save();
-    canvas.translate(offset.dx, offset.dy);
-    canvas.scale(size.width, size.height);
-    canvas.drawPath(path, paintOuter);
-	canvas.drawPath(path, paintStroke);
-    canvas.restore();
+    // bump this value to try more render ops
+    int complexity = 1;
 
-    double scale = 0.75;
-    canvas.save();
-    canvas.translate(offset.dx + (size.width * (1.0 - scale)) / 2.0,
-        offset.dy + (size.height * (1.0 - scale)) / 2.0);
-    canvas.scale(size.width * scale, size.height * scale);
-    canvas.drawPath(path, paintInner);
-	canvas.drawPath(path, paintStroke);
-    canvas.restore();
+    double scale = 1.33333333333;
+    for (int i = 0; i < complexity; i++) {
+      scale *= 0.75;
+      canvas.save();
+      canvas.translate(offset.dx + (size.width * (1.0 - scale)) / 2.0,
+          offset.dy + (size.height * (1.0 - scale)) / 2.0);
+      canvas.scale(size.width * scale, size.height * scale);
+      canvas.drawPath(path, paintOuter);
+      canvas.drawPath(path, paintStroke);
+      canvas.restore();
+
+      scale *= 0.75;
+      canvas.save();
+      canvas.translate(offset.dx + (size.width * (1.0 - scale)) / 2.0,
+          offset.dy + (size.height * (1.0 - scale)) / 2.0);
+      canvas.scale(size.width * scale, size.height * scale);
+      canvas.drawPath(path, paintInner);
+      canvas.drawPath(path, paintStroke);
+      canvas.restore();
+    }
   }
 }
